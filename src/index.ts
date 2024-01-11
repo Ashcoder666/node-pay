@@ -6,6 +6,7 @@ import cookieParse from "cookie-parser";
 import swaggerUI from "swagger-ui-express";
 import { swaggerSpecs } from "./config/swaggerConfig";
 import { PORT, HOST_URL, SWAGGER_URL } from "./constants";
+import routing from "./routes";
 
 const app: Express = express();
 app.use(cors());
@@ -23,7 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParse());
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
-
+routing(app);
 app.listen(PORT, () => {
   console.log(`Server is listening at ${HOST_URL}`);
   console.log(`API Documentation: ${SWAGGER_URL}`);

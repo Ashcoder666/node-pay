@@ -1,7 +1,7 @@
 import { userModel } from "../models/userModel";
 
-class UserService {
-  userSignup = async (
+const UserService = {
+  userSignup: async (
     full_name: string,
     phone_number: number,
     email: string,
@@ -19,7 +19,7 @@ class UserService {
     });
 
     return newUser;
-  };
-}
+  },
+};
 
 export default UserService;
