@@ -9,6 +9,8 @@ interface IUser extends Document {
     ifsc: string;
     bank_name: string;
   };
+  verified: boolean;
+  password: string;
 }
 
 interface IUserDB extends IUser, Document {
@@ -24,6 +26,8 @@ const userSchema: Schema<IUserDB> = new Schema<IUserDB>({
     ifsc: { type: String, required: true },
     bank_name: { type: String, required: true },
   },
+  verified: { type: Boolean, default: false },
+  password: { type: String, required: true },
 });
 
 const userModel = mongoose.model<IUserDB>("users", userSchema);
