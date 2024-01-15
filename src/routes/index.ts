@@ -1,7 +1,7 @@
 import { Express } from "express";
-import userRouter from "./userRoutes";
+import authRoute from "./authRoutes";
 function routing(app: Express) {
-  // app.use("/user", userRouter);
+  app.use("/", authRoute);
   app.use("*", (req, res, next) => {
     return res.status(404).json({
       message: "not-found",

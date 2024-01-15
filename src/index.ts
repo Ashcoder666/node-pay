@@ -8,6 +8,7 @@ import { swaggerSpecs } from "./config/swaggerConfig";
 import { PORT, HOST_URL, SWAGGER_URL } from "./constants";
 import routing from "./routes";
 import connectDatabase from "./config/database";
+import { createClient } from "redis";
 
 const app: Express = express();
 app.use(cors());
@@ -26,6 +27,14 @@ app.use(express.json());
 app.use(cookieParse());
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
 routing(app);
+// client.on("error", (err) => console.log("Redis Client Error", err));
+// client.connect().then(() => {
+//   console.log("redis connection established");
+// });
+
+export const client = createClient()
+  .on("error", (err) => console.log("Redis Client Error", err))
+  .connect();
 connectDatabase();
 app.listen(PORT, () => {
   console.log(`Server is listening at ${HOST_URL}`);

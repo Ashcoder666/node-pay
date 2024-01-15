@@ -20,7 +20,7 @@ interface IUserDB extends IUser, Document {
 const userSchema: Schema<IUserDB> = new Schema<IUserDB>({
   full_name: { type: String, required: true },
   phone_number: { type: Number, required: true },
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   bank_details: {
     account_no: { type: Number, required: true },
     ifsc: { type: String, required: true },
