@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import helperFunctions from "../helpers/helperFunctions";
 import authService from "../services/authService";
 import { userModel } from "../models/userModel";
+import { redis } from "../index";
 
 const authController = {
   userRegistration: async (req: Request, res: Response) => {
@@ -11,7 +12,7 @@ const authController = {
       const otp = helperFunctions.generateRandom4DigitNumber();
 
       await helperFunctions.sendMail(email, otp);
-
+      await redis.setex(email, 60, otp);
       await authService.registerUser(
         full_name,
         phone_number,
@@ -29,10 +30,22 @@ const authController = {
   verifyUser: async (req: Request, res: Response) => {
     const { email, otp } = req.body;
     console.log(email, otp);
+
     try {
+      const storedOTP = await redis.get(email);
+
+      if (storedOTP == null) {
+        throw new Error("otp doesnt exist");
+      }
+
+      if (storedOTP != otp) {
+        throw new Error("Invalid OTP");
+      }
       await userModel.updateOne({ email }, { verified: true });
       res.status(201).json({ message: "otp verified succesfully" });
-    } catch (error) {}
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
   },
 };
 

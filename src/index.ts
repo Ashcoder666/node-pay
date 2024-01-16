@@ -8,8 +8,10 @@ import { swaggerSpecs } from "./config/swaggerConfig";
 import { PORT, HOST_URL, SWAGGER_URL } from "./constants";
 import routing from "./routes";
 import connectDatabase from "./config/database";
+import { Redis } from "ioredis";
 
 const app: Express = express();
+export const redis = new Redis();
 app.use(cors());
 app.use(helmet());
 app.use((req, res, next) => {
