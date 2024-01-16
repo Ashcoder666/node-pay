@@ -1,5 +1,7 @@
 import helperFunctions from "../helpers/helperFunctions";
 import { userModel } from "../models/userModel";
+import jwt from "jsonwebtoken";
+import { JWT_ACCESS_EXPIRY, JWT_ACCESS_SECRET } from "../constants";
 const authService = {
   registerUser: async (
     full_name: string,
@@ -27,6 +29,13 @@ const authService = {
     const user = await userModel.findOne({ email });
 
     return user;
+  },
+  jwtTokenGeneration: (id: string) => {
+    const token = jwt.sign({ _id: id }, "secret1234", {
+      expiresIn: JWT_ACCESS_EXPIRY,
+    });
+
+    return token;
   },
 };
 
