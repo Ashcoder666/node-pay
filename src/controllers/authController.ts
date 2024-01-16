@@ -10,9 +10,14 @@ const authController = {
 
     try {
       const otp = helperFunctions.generateRandom4DigitNumber();
+      const users = await userModel.findOne({ email });
 
-      await helperFunctions.sendMail(email, otp);
-      await redis.setex(email, 60, otp);
+      console.log(users);
+
+      if (users) {
+        throw new Error("Email id already exists");
+      }
+
       await authService.registerUser(
         full_name,
         phone_number,
@@ -20,6 +25,9 @@ const authController = {
         bank_details,
         password
       );
+
+      await helperFunctions.sendMail(email, otp);
+      await redis.setex(email, 60, otp);
 
       res.status(201).json({ message: "otp send succesfully" });
     } catch (error: any) {
