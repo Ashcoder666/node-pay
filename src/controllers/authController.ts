@@ -55,6 +55,26 @@ const authController = {
       res.status(500).json({ message: error.message });
     }
   },
+
+  login: async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
+    try {
+      const user = await authService.userLogin(email);
+      if (!user) {
+        throw new Error("user doesnt exist");
+      }
+
+      if (password != user.password) {
+        throw new Error("Incorect Password");
+      }
+
+      res.status(200).json({ message: "logged in succesfully" });
+      //send jwt token / cookies
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  },
 };
 
 export default authController;

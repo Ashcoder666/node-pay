@@ -22,6 +22,12 @@ const authService = {
 
     return newUser;
   },
+
+  userLogin: async (email: string) => {
+    const user = await userModel.findOne({ email });
+
+    return user;
+  },
 };
 
 export default authService;
