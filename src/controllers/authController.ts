@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import helperFunctions from "../helpers/helperFunctions";
 import authService from "../services/authService";
-import { client } from "../index";
 import { userModel } from "../models/userModel";
 
 const authController = {
@@ -10,7 +9,7 @@ const authController = {
 
     try {
       const otp = helperFunctions.generateRandom4DigitNumber();
-      (await client).SET(email, otp);
+
       await helperFunctions.sendMail(email, otp);
 
       await authService.registerUser(
@@ -31,16 +30,6 @@ const authController = {
     const { email, otp } = req.body;
     console.log(email, otp);
     try {
-      const ressval = (await client).GET(email);
-
-      if (ressval == null) {
-        throw new Error("email doesnt exist");
-      }
-
-      if (ressval != otp) {
-        throw new Error("Invalid OTP");
-      }
-      console.log(ressval);
       await userModel.updateOne({ email }, { verified: true });
       res.status(201).json({ message: "otp verified succesfully" });
     } catch (error) {}
