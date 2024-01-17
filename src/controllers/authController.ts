@@ -11,11 +11,14 @@ const authController = {
     try {
       const otp = helperFunctions.generateRandom4DigitNumber();
       const users = await userModel.findOne({ email });
-
+      const phoneUser = await userModel.findOne({ phone_number });
       console.log(users);
 
       if (users) {
         throw new Error("Email id already exists");
+      }
+      if (phoneUser) {
+        throw new Error("phone number already exists");
       }
 
       await authService.registerUser(
