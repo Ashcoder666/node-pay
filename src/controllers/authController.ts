@@ -4,6 +4,7 @@ import authService from "../services/authService";
 import { userModel } from "../models/userModel";
 import { redis } from "../index";
 import { JWT_ACCESS_SECRET } from "../constants";
+import rateLimit from "express-rate-limit";
 const authController = {
   userRegistration: async (req: Request, res: Response) => {
     const { full_name, phone_number, email, bank_details, password } = req.body;
@@ -94,6 +95,11 @@ const authController = {
       res.status(500).json({ message: error.message });
     }
   },
+  otpLimiter: rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 5, // Max requests per windowMs
+    message: "Too many OTP requests from this IP, please try again later.",
+  }),
 };
 
 export default authController;
