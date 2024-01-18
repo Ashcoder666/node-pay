@@ -36,34 +36,50 @@ const paymentController = {
       return res.status(500).json({ message: error.message });
     }
   },
+  // createOrder: async (req: Request, res: Response) => {
+  //   const url = "https://sandbox.cashfree.com/pg/orders";
+
+  //   const headers = {
+  //     // accept: "application/json",
+  //     // "content-type": "application/json",
+  //     "x-client-id": process.env.CASHFREE_APP_ID,
+  //     "x-client-secret": process.env.CASHFREE_SECRET,
+  //     "x-api-version": "2022-09-01",
+  //   };
+
+  //   const data = {
+  //     customer_details: {
+  //       customer_id: "terrgdg34",
+  //       customer_phone: "3534556363",
+  //     },
+  //     order_amount: 10000,
+  //     order_id: "3445334",
+  //     order_currency: "INR",
+  //   };
+  //   try {
+  //     const response = await axios.post(url, data, { headers });
+
+  //     console.log(response.data);
+
+  //     return res.json({ res: response.data });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // },
   createOrder: async (req: Request, res: Response) => {
-    const url = "https://sandbox.cashfree.com/pg/orders";
-
-    const headers = {
-      // accept: "application/json",
-      // "content-type": "application/json",
-      "x-client-id": process.env.CASHFREE_APP_ID,
-      "x-client-secret": process.env.CASHFREE_SECRET,
-      "x-api-version": "2022-09-01",
-    };
-
-    const data = {
-      customer_details: {
-        customer_id: "terrgdg34",
-        customer_phone: "3534556363",
-      },
-      order_amount: 10000,
-      order_id: "3445334",
-      order_currency: "INR",
-    };
+    const { customer_details, order_amount, order_id, order_currency } =
+      req.body;
     try {
-      const response = await axios.post(url, data, { headers });
+      const response = await paymentService.createOrder(
+        customer_details,
+        order_amount,
+        order_id,
+        order_currency
+      );
 
-      console.log(response.data);
-
-      return res.json({ res: response.data });
-    } catch (error) {
-      console.log(error);
+      return res.status(200).json({ message: "success", data: response });
+    } catch (error: any) {
+      return res.status(500).json({ message: error.message });
     }
   },
 };
