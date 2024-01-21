@@ -9,11 +9,11 @@ interface AuthenticatedRequest extends Request {
 
 const paymentController = {
   searchUser: async (req: AuthenticatedRequest, res: Response) => {
-    // const email = req.decoded;
-    // const currentUserExits = await userModel.findOne({ email });
-    // if (!currentUserExits) {
-    // return  res.status(401).json({ message: "user doesnt exist anymore" });
-    // }
+    const email = req.decoded;
+    const currentUserExits = await userModel.findOne({ email });
+    if (!currentUserExits) {
+      return res.status(401).json({ message: "user doesnt exist anymore" });
+    }
     const searchingNumber = req.query.search;
 
     try {
@@ -66,10 +66,18 @@ const paymentController = {
   //     console.log(error);
   //   }
   // },
-  createOrder: async (req: Request, res: Response) => {
-    const { customer_details, order_amount, order_id, order_currency } =
-      req.body;
+  createOrder: async (req: AuthenticatedRequest, res: Response) => {
+    const { order_amount, order_id, order_currency } = req.body;
     try {
+      const email = req.decoded;
+      const currentUserExits = await userModel.findOne({ email });
+      if (!currentUserExits) {
+        return res.status(401).json({ message: "user doesnt exist anymore" });
+      }
+      const customer_details = {
+        customer_id: currentUserExits._id,
+        customer_phone: currentUserExits.phone_number.toString(),
+      };
       const response = await paymentService.createOrder(
         customer_details,
         order_amount,
@@ -80,6 +88,20 @@ const paymentController = {
       return res.status(200).json({ message: "success", data: response });
     } catch (error: any) {
       return res.status(500).json({ message: error.message });
+    }
+  },
+  createOrderPay: async (req: Request, res: Response) => {
+    const { session_id, payment_method } = req.body;
+    try {
+      const response = await paymentService.createOrderPay(
+        session_id,
+        payment_method
+      );
+
+      return res.status(200).json({ message: "success", data: response });
+    } catch (error: any) {
+      console.log(error);
+      return res.status(500).json({ message: error });
     }
   },
 };
