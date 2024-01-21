@@ -2,7 +2,7 @@ import mongoose, { Document, Schema, Types } from "mongoose";
 
 interface IOrder extends Document {
   customer_details: {
-    customer_id: string;
+    customer_id: Types.ObjectId;
     customer_phone: string;
   };
   order_amount: number;
@@ -16,7 +16,7 @@ interface IOrderDB extends IOrder, Document {
 
 const OrderSchema: Schema<IOrderDB> = new Schema<IOrderDB>({
   customer_details: {
-    customer_id: String,
+    customer_id: Types.ObjectId,
     customer_phone: String,
   },
   order_amount: Number,

@@ -1,7 +1,10 @@
 import express from "express";
 import paymentController from "../controllers/paymentController";
+import tokenVerifier from "../middlewares/authorizationService";
 
 const router = express.Router();
+
+router.use(tokenVerifier);
 
 router.get("/search", paymentController.searchUser);
 router.post("/create-order", paymentController.createOrder);

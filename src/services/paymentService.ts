@@ -42,6 +42,7 @@ const paymentService = {
       // console.log(response);
       return response.data;
     } catch (error: any) {
+      console.log(error);
       throw new Error(error?.message);
     }
   },

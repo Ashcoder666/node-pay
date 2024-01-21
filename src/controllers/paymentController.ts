@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { userModel } from "../models/userModel";
 import paymentService from "../services/paymentService";
 import axios from "axios";
+import { orderModel } from "../models/orderModel";
 
 interface AuthenticatedRequest extends Request {
   decoded?: any;
@@ -67,23 +68,35 @@ const paymentController = {
   //   }
   // },
   createOrder: async (req: AuthenticatedRequest, res: Response) => {
-    const { order_amount, order_id, order_currency } = req.body;
+    const { order_amount } = req.body;
     try {
       const email = req.decoded;
       const currentUserExits = await userModel.findOne({ email });
       if (!currentUserExits) {
         return res.status(401).json({ message: "user doesnt exist anymore" });
       }
+
+      let count = await orderModel.countDocuments({});
+      const orderId = `ORD${count++}`;
+      const orderCurrency = "INR";
       const customer_details = {
         customer_id: currentUserExits._id,
         customer_phone: currentUserExits.phone_number.toString(),
       };
+
       const response = await paymentService.createOrder(
         customer_details,
         order_amount,
-        order_id,
-        order_currency
+        orderId,
+        orderCurrency
       );
+
+      await orderModel.create({
+        customer_details,
+        order_amount,
+        order_id: `ORD${count++}`,
+        order_currency: "INR",
+      });
 
       return res.status(200).json({ message: "success", data: response });
     } catch (error: any) {

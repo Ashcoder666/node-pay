@@ -31,11 +31,11 @@ const authController = {
       );
 
       await helperFunctions.sendMail(email, otp);
-      await redis.setex(email, 60, otp);
+      await redis.setex(email, 300, otp);
 
-      res.status(201).json({ message: "otp send succesfully" });
+      return res.status(201).json({ message: "otp send succesfully" });
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     }
   },
 
@@ -56,7 +56,7 @@ const authController = {
         const otp = helperFunctions.generateRandom4DigitNumber();
         await helperFunctions.sendMail(email, otp);
         await redis.setex(email, 60, otp);
-        res
+        return res
           .status(201)
           .json({ message: "otp doesnt exist ,  resending OTP succesfully" });
       }
@@ -65,9 +65,9 @@ const authController = {
         throw new Error("Invalid OTP");
       }
       await userModel.updateOne({ email }, { verified: true });
-      res.status(201).json({ message: "otp verified succesfully" });
+      return res.status(201).json({ message: "otp verified succesfully" });
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     }
   },
 
@@ -89,10 +89,10 @@ const authController = {
 
       const token = authService.jwtTokenGeneration(email);
 
-      res.status(200).json({ message: "logged in succesfully", token });
+      return res.status(200).json({ message: "logged in succesfully", token });
       //send jwt token / cookies
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     }
   },
   otpLimiter: rateLimit({
