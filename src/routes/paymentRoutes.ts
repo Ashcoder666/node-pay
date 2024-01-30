@@ -4,13 +4,14 @@ import tokenVerifier from "../middlewares/authorizationService";
 
 const router = express.Router();
 
-router.use(tokenVerifier);
+// router.use(tokenVerifier);
 
 router.get("/search", paymentController.searchUser);
 router.post("/create-order", paymentController.createOrder);
 router.post("/create-order-pay", paymentController.createOrderPay);
 router.post("/webhook", (req, res) => {
   console.log(req.body);
+  return res.status(201).json({ message: "otp verified succesfully" });
 });
 
 export default router;
